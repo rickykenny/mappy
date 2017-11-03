@@ -1,2 +1,0 @@
-# mappy
-Mappy
