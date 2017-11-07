@@ -7,15 +7,24 @@
     <title>Mappy</title>
 
     <link rel="stylesheet" type="text/css" href="node_modules\leaflet\dist\leaflet.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
 
     <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
     <script src="node_modules/angular-leaflet-directive/dist/angular-leaflet-directive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.3/angular-ui-router.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/bluebird/latest/bluebird.core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
     <script src="app.js"></script>
+    <script src="controllers/map.controller.js"></script>
+    <script src="services/location.service.js"></script>
 </head>
 
 <body ng-app="app">
+    <div id="app-header">
+        <div id="app-logo">Mappy</div>
+    </div>
     <ui-view></ui-view>
 </body>
 
