@@ -1,11 +1,8 @@
 angular.module('app')
-    .controller('mapController', function ($window, $state, geolocationSvc) {
+    .controller('mapController', function ($window, $state, socket, locationService) {
         var vm = this;
-        // set default values
-        vm.roomId = $state.params.roomId;
-        vm.user = {
-            id: new Date().getTime
-        };
+
+        // set default values for map
         vm.markers = [];
         vm.center = {
             lat: 51.505,
@@ -13,12 +10,45 @@ angular.module('app')
             zoom: 4
         }
 
-        // connect to socket
-        var socket = io();
+        // setup room and user
+        vm.roomId = $state.params.roomId;
+        vm.user = {
+            id: new Date().getTime()
+        };
+        socket.emit('join-room', {
+            userId: vm.user.id,
+            roomId: vm.roomId
+        });
+        vm.users = [];
+
+        vm.postLocation = function () {
+            locationService.postCurrentPosition(vm.user.location, vm.user.id, vm.roomId);
+        }
+
+        socket.on('other-user-location-update', function (data) {
+            var otherUser = vm.users.find(function (user) {
+                return user.id === data.userId;
+            })
+            if (!otherUser) {
+                otherUser = {
+                    id: data.userId
+                }
+
+                vm.users.push(otherUser);
+                vm.markers.push({
+                    lat: data.lat,
+                    lng: data.lng,
+                    focus: false,
+                    message: data.userId,
+                    draggable: false,
+                    id: data.userId
+                })
+            }
+        })
 
         // get user's location
         vm.locationPending = true;
-        geolocationSvc.getCurrentPosition()
+        locationService.getCurrentPosition()
             .then(function (response) {
                 vm.user.location = {
                     lat: response.coords.latitude,
@@ -26,6 +56,8 @@ angular.module('app')
                     accuracy: response.coords.accuracy,
                     speed: response.coords.speed
                 }
+                locationService.postCurrentPosition(vm.user.location, vm.user.id, vm.roomId);
+
                 vm.center = {
                     lat: vm.user.location.lat,
                     lng: vm.user.location.lng,

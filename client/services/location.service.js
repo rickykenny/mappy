@@ -1,6 +1,6 @@
 angular.module('app')
-    .factory('geolocationSvc', ['$q', '$window', function ($q, $window) {
-        function getCurrentPosition() {
+    .factory('locationService', ['$q', '$window', 'socket', function ($q, $window, socket) {
+        this.getCurrentPosition = function () {
             var deferred = $q.defer();
 
             if (!$window.navigator.geolocation) {
@@ -18,7 +18,14 @@ angular.module('app')
             return deferred.promise;
         }
 
-        return {
-            getCurrentPosition: getCurrentPosition
-        };
+        this.postCurrentPosition = function (location, userId, roomId) {
+            var packet = {
+                userId: userId,
+                lat: location.lat,
+                lng: location.lng
+            }
+            socket.emit('user-location-update', packet, roomId);
+        }
+
+        return this;
     }]);

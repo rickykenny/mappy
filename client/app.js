@@ -1,4 +1,4 @@
-angular
+var app = angular
     .module('app', ['ui.router', 'leaflet-directive'])
 
     .config(function ($stateProvider, $urlRouterProvider) {
