@@ -1,5 +1,6 @@
 <h2>{{vm.roomId}}</h2>
-<button ng-click="vm.postLocation()">POST</button>
+<button ng-click="vm.updateUser()">POST</button>
+<label>User Name:</label><input ng-model="vm.user.name">
 <div ng-show="vm.locationPending && !vm.locationDenied">
     <h3>Awaiting location...</div>
 <div ng-show="vm.locationDenied">You denied location ya dumb dog!</div>

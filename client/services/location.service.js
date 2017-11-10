@@ -18,14 +18,5 @@ angular.module('app')
             return deferred.promise;
         }
 
-        this.postCurrentPosition = function (location, userId, roomId) {
-            var packet = {
-                userId: userId,
-                lat: location.lat,
-                lng: location.lng
-            }
-            socket.emit('user-location-update', packet, roomId);
-        }
-
         return this;
     }]);

@@ -1,5 +1,5 @@
 angular.module('app')
-    .controller('mapController', function ($window, $state, socket, locationService) {
+    .controller('mapController', function ($scope, $window, $state, socket, locationService) {
         var vm = this;
 
         // set default values for map
@@ -10,40 +10,43 @@ angular.module('app')
             zoom: 4
         }
 
-        // setup room and user
-        vm.roomId = $state.params.roomId;
+        // setup room and user        
         vm.user = {
             id: new Date().getTime()
         };
-        socket.emit('join-room', {
-            userId: vm.user.id,
-            roomId: vm.roomId
-        });
-        vm.users = [];
+        vm.room = {
+            id: $state.params.roomId,
+            users: []
+        };
 
-        vm.postLocation = function () {
-            locationService.postCurrentPosition(vm.user.location, vm.user.id, vm.roomId);
+        // join room
+        socket.emit('room-join', {
+            roomId: vm.room.id,
+            user: vm.user
+        });
+
+        vm.updateUser = function () {
+            console.log('updating user...');
+            socket.emit('user-update', vm.user);
         }
 
-        socket.on('other-user-location-update', function (data) {
-            var otherUser = vm.users.find(function (user) {
-                return user.id === data.userId;
-            })
-            if (!otherUser) {
-                otherUser = {
-                    id: data.userId
-                }
+        socket.on('room-update', function (newRoom) {
+            console.log('room updated!')
+            console.log(newRoom);
 
-                vm.users.push(otherUser);
-                vm.markers.push({
-                    lat: data.lat,
-                    lng: data.lng,
+            vm.room = newRoom;
+            vm.markers = newRoom.users.filter(function (user) {
+                return user.location && user.location.lat;
+            }).map(function (user) {
+                return {
+                    lat: user.location.lat,
+                    lng: user.location.lng,
                     focus: false,
-                    message: data.userId,
+                    message: user.name,
                     draggable: false,
-                    id: data.userId
-                })
-            }
+                    id: user.id
+                }
+            })
         })
 
         // get user's location
@@ -56,27 +59,14 @@ angular.module('app')
                     accuracy: response.coords.accuracy,
                     speed: response.coords.speed
                 }
-                locationService.postCurrentPosition(vm.user.location, vm.user.id, vm.roomId);
+                vm.updateUser();
 
                 vm.center = {
                     lat: vm.user.location.lat,
                     lng: vm.user.location.lng,
                     zoom: 20
                 };
-
-                vm.markers.push({
-                    lat: vm.user.location.lat,
-                    lng: vm.user.location.lng,
-                    focus: true,
-                    message: "Me",
-                    draggable: false,
-                    id: vm.user.id
-                });
                 vm.locationPending = false;
-
-                // get other users
-                vm.usersPending = true;
-
             })
             .catch(function (error) {
                 vm.locationDenied = true;
