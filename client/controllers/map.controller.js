@@ -44,32 +44,44 @@ angular.module('app')
                     focus: false,
                     message: user.name,
                     draggable: false,
-                    id: user.id
                 }
             })
         })
+
+        var setLocation = function (location) {
+            vm.user.location = {
+                lat: location.coords.latitude,
+                lng: location.coords.longitude,
+                accuracy: location.coords.accuracy,
+                speed: location.coords.speed
+            }
+            vm.updateUser();
+
+            vm.center = {
+                lat: vm.user.location.lat,
+                lng: vm.user.location.lng,
+                zoom: 20
+            };
+        }
 
         // get user's location
         vm.locationPending = true;
         locationService.getCurrentPosition()
             .then(function (response) {
-                vm.user.location = {
-                    lat: response.coords.latitude,
-                    lng: response.coords.longitude,
-                    accuracy: response.coords.accuracy,
-                    speed: response.coords.speed
-                }
-                vm.updateUser();
-
-                vm.center = {
-                    lat: vm.user.location.lat,
-                    lng: vm.user.location.lng,
-                    zoom: 20
-                };
+                setLocation(response);
                 vm.locationPending = false;
             })
             .catch(function (error) {
                 vm.locationDenied = true;
             })
+
+        // watch users location for changes
+        locationService.watchCurrentPosition();
+
+        $scope.$on('location-changed', function (event, args) {
+            console.log(args);
+            setLocation(args.position);
+            
+        })
 
     })

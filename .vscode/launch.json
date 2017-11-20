@@ -19,7 +19,7 @@
                 "run-script",
                 "debug"
             ],
-            "port": 3000
+            "port": 9229
         }
     ]
 }

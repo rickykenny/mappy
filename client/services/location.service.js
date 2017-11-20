@@ -1,5 +1,5 @@
 angular.module('app')
-    .factory('locationService', ['$q', '$window', 'socket', function ($q, $window, socket) {
+    .factory('locationService', ['$q', '$window', 'socket', '$rootScope', function ($q, $window, socket, $rootScope) {
         this.getCurrentPosition = function () {
             var deferred = $q.defer();
 
@@ -17,6 +17,23 @@ angular.module('app')
 
             return deferred.promise;
         }
+
+        this.watchCurrentPosition = function () {
+            if (!$window.navigator.geolocation) {
+                throw new Error('Geolocation not supported.');
+            } else {
+                $window.navigator.geolocation.watchPosition(
+                    function (position) {
+                        $rootScope.$broadcast('location-changed', {
+                            position: position
+                        })
+                    },
+                    function (err) {
+                        throw new Error('Location cannot be watched')
+                    });
+            }
+        }
+
 
         return this;
     }]);

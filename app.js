@@ -48,6 +48,15 @@ var joinRoom = function (roomId, user) {
   });
 }
 
+var leaveRoom = function (roomId, user) {
+  console.log(`${user.id} is leaving room ${roomId}`);
+  var room = rooms.find((room) => room.id === roomId);
+  var roomUserIndex = room.users.findIndex((roomUser) => {
+    return roomUser.id === user.id;
+  })
+  room.users.splice(roomUserIndex, 1);
+}
+
 var updateUser = function (user) {
   console.log(`Updating ${user.id} with accuracy ${user.location.accuracy}`);
   var lookup = userRoomLookup.find((lookup) => lookup.userId === user.id);
@@ -59,10 +68,7 @@ var updateUser = function (user) {
 }
 
 var updateRoom = function (newRoom) {
-  console.log(`Updating room ${newRoom.id} from ${rooms.length} rooms`);
-
   var roomIndex = rooms.findIndex((room) => room.id == newRoom.id);
-  console.log(`room index is ` + roomIndex) 
   if (roomIndex === -1) {
     throw new Error(`room ${newRoom.id} not found but there is ${rooms[0].id}`)
   }
@@ -77,22 +83,44 @@ var updateRoom = function (newRoom) {
  */
 io.on('connection', function (socket) {
   console.log('a user connected');
-  allClients.push(socket);
+  users.push({
+    id: socket.id
+  })
 
   socket.on('disconnect', function () {
-    var i = allClients.indexOf(socket);
-    allClients.splice(i, 1);
-    console.log('user disconnected');
+    var i = users.findIndex((u) => u.id === socket.id);
+    var user = users[i];
+  var lookup = userRoomLookup.find((lookup) => lookup.userId === user.id);
+    if(!lookup){
+      console.log(user.id);
+      throw new Error(`no lookup found for user ${user.id}`)
+    }
+    console.log(`User ${user.id} disconnected and leaving room ${lookup.roomId}`);
+    leaveRoom(lookup.roomId, user);
+
+    users.splice(i, 1);
   });
 
   socket.on('user-update', function (packet) {
+    packet.id = socket.id;
     updateUser(packet);
   })
 
   socket.on('room-join', function (packet) {
+    packet.user.id = socket.id;
+
     // add user to room
     socket.join(packet.roomId);
     joinRoom(packet.roomId, packet.user);
+  })
+
+  socket.on('room-leave', function (packet) {
+    packet.user.id = socket.id;
+
+    // remove user from room
+    socket.leave(packet.roomId);
+    var user = users.find((u) => u.id === packet.user.id);
+    leaveRoom(packet.roomId, user);
   })
 });
 
