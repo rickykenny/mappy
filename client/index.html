@@ -6,15 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mappy</title>
 
-    <link rel="stylesheet" type="text/css" href="node_modules/leaflet/dist/leaflet.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
 
-    <script src="node_modules/leaflet/dist/leaflet.js"></script>
-    <script src="node_modules/angular/angular.min.js"></script>
-    <script src="node_modules/angular-leaflet-directive/dist/angular-leaflet-directive.min.js"></script>
-    <script src="node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
-    <script src="node_modules/bluebird/js/browser/bluebird.core.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-leaflet-directive/0.10.0/angular-leaflet-directive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.3/angular-ui-router.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.1/bluebird.core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
 
     <script src="app.js"></script>
@@ -24,9 +25,7 @@
 </head>
 
 <body ng-app="app">
-    <div id="app-header">
-        <div id="app-logo">Mappy</div>
-    </div>
+
     <ui-view></ui-view>
 </body>
 
