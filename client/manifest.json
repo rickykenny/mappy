@@ -1,0 +1,12 @@
+{
+    "name": "WTF.RU",
+    "icons": [{
+        "src": "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-128.png",
+        "type": "image/png",
+        "sizes": "48x48",
+        "density": 1.0
+    }],
+    "start_url": "index.html",
+    "display": "standalone",
+    "orientation": "portrait"
+}
