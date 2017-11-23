@@ -55,11 +55,15 @@ var leaveRoom = function (roomId, user) {
     return roomUser.id === user.id;
   })
   room.users.splice(roomUserIndex, 1);
+  updateRoom(room);
 }
 
 var updateUser = function (user) {
   console.log(`Updating ${user.id} with accuracy ${user.location.accuracy}`);
   var lookup = userRoomLookup.find((lookup) => lookup.userId === user.id);
+  if (!lookup) {
+    return;
+  }
   var roomIndex = rooms.findIndex((room) => room.id === lookup.roomId);
   var roomUserIndex = rooms[roomIndex].users.findIndex((u) => u.id === user.id);
   rooms[roomIndex].users[roomUserIndex] = user;
@@ -82,7 +86,7 @@ var updateRoom = function (newRoom) {
  * SOCKET.IO
  */
 io.on('connection', function (socket) {
-  console.log('a user connected');
+  console.log(`user ${socket.id} connected`);
   users.push({
     id: socket.id
   })

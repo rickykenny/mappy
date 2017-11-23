@@ -3,7 +3,17 @@
     <h3>Awaiting location...</div>
 <div ng-show="vm.locationDenied">You denied location ya dumb dog!</div>
 <div ng-if="!vm.locationPending">
-    <leaflet lf-center="vm.center" markers="vm.markers" bounds="vm.bounds" height="480px" width="100%"></leaflet>
+    <ui-gmap-google-map center='vm.map.center' zoom='vm.map.zoom'>
+        <ui-gmap-markers models="vm.markers" idKey='id' options="'options'" fit="true" coords="'location'"></ui-gmap-marker>
+    </ui-gmap-google-map>
+
     <div ng-show="vm.usersPending">Loading users...</div>
     <h3>Users in map: {{vm.markers.length}}</h3>
+    <label ng-hide="true">
+        <input type="checkbox" ng-model="fitAllUsers" value="true" />See everyone</label>
 </div>
+<style>
+    .angular-google-map-container {
+        height: 400px;
+    }
+</style>
