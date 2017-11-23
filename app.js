@@ -86,12 +86,16 @@ io.on('connection', function (socket) {
   users.push({
     id: socket.id
   })
+  // tell user their id  
+  socket.emit('connected', {
+    id: socket.id
+  });
 
   socket.on('disconnect', function () {
     var i = users.findIndex((u) => u.id === socket.id);
     var user = users[i];
-  var lookup = userRoomLookup.find((lookup) => lookup.userId === user.id);
-    if(!lookup){
+    var lookup = userRoomLookup.find((lookup) => lookup.userId === user.id);
+    if (!lookup) {
       console.log(user.id);
       throw new Error(`no lookup found for user ${user.id}`)
     }

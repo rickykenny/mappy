@@ -3,11 +3,7 @@
     <h3>Awaiting location...</div>
 <div ng-show="vm.locationDenied">You denied location ya dumb dog!</div>
 <div ng-if="!vm.locationPending">
-    <leaflet lf-center="vm.center" markers="vm.markers" height="480px" width="100%"></leaflet>
+    <leaflet lf-center="vm.center" markers="vm.markers" bounds="vm.bounds" height="480px" width="100%"></leaflet>
     <div ng-show="vm.usersPending">Loading users...</div>
-    <div ng-show="vm.users">
-        <div ng-repeat="user in vm.users track by id">
-            <span>{{user.id}}</span>
-        </div>
-    </div>
+    <h3>Users in map: {{vm.markers.length}}</h3>
 </div>

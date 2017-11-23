@@ -1,9 +1,15 @@
 angular.module('app')
-    .controller('mapController', function ($scope, $window, $state, socket, locationService) {
+    .controller('mapController', function ($scope, $window, $state, socket, locationService, leafletBoundsHelpers) {
         var vm = this;
+
+        var a = leafletBoundsHelpers;
 
         // set default values for map
         vm.markers = [];
+        vm.bounds = leafletBoundsHelpers.createBoundsFromArray([
+            [51.508742458803326, -0.087890625],
+            [51.508742458803326, -0.087890625]
+        ]);
         vm.center = {
             lat: 51.505,
             lng: -0.09,
@@ -12,7 +18,8 @@ angular.module('app')
 
         // setup room and user        
         vm.user = {
-            id: new Date().getTime()
+            id: new Date().getTime(),
+            name: "piss head"
         };
         vm.room = {
             id: $state.params.roomId,
@@ -30,22 +37,40 @@ angular.module('app')
             socket.emit('user-update', vm.user);
         }
 
+        socket.on('connected', function (response) {
+            vm.userId = response.id;
+        })
+
         socket.on('room-update', function (newRoom) {
             console.log('room updated!')
             console.log(newRoom);
 
             vm.room = newRoom;
-            vm.markers = newRoom.users.filter(function (user) {
-                return user.location && user.location.lat;
-            }).map(function (user) {
+            vm.markers = newRoom.users.map(function (user) {
+                if(user.id === vm.userId) {
+                    user.name = "ME"
+                }
                 return {
                     lat: user.location.lat,
                     lng: user.location.lng,
                     focus: false,
                     message: user.name,
                     draggable: false,
+                    id: user.id
                 }
             })
+
+            if (vm.markers.length > 1) {
+                // zoom to fit everyone
+                var arr = vm.markers.map(function (marker) {
+                    return [marker.lat, marker.lng];
+                });
+                var bounds = leafletBoundsHelpers.createBoundsFromArray(arr);
+                vm.bounds = bounds;
+            } else {
+                // zoom to just fit meeeee
+                vm.center.zoom = 80;
+            }
         })
 
         var setLocation = function (location) {
@@ -57,11 +82,8 @@ angular.module('app')
             }
             vm.updateUser();
 
-            vm.center = {
-                lat: vm.user.location.lat,
-                lng: vm.user.location.lng,
-                zoom: 20
-            };
+            vm.center.lat = vm.user.location.lat;
+            vm.center.lng = vm.user.location.lng;
         }
 
         // get user's location
@@ -69,6 +91,7 @@ angular.module('app')
         locationService.getCurrentPosition()
             .then(function (response) {
                 setLocation(response);
+                vm.center.zoom = 8;
                 vm.locationPending = false;
             })
             .catch(function (error) {
@@ -81,7 +104,7 @@ angular.module('app')
         $scope.$on('location-changed', function (event, args) {
             console.log(args);
             setLocation(args.position);
-            
+
         })
 
     })
