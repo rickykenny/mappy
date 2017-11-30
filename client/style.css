@@ -1,5 +1,6 @@
-html, body {
-    height:100%;
+html,
+body {
+    height: 100%;
 }
 
 body {
@@ -11,10 +12,34 @@ body {
     display: flex;
     flex-direction: row;
     background-color: rgb(6, 53, 102);
-    color:white;
+    color: white;
     padding: 4px;
 }
 
 #app-logo {
     font-size: 24px;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex.col {
+    flex-direction: column;
+}
+
+.flex.row {
+    flex-direction: row;
+}
+
+.flex .fill {
+    flex-grow: 1;
+}
+
+.flex.col.v-center {
+    justify-content: center;
+}
+
+.flex.col.h-center {
+    align-items: center;
 }

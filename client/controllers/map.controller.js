@@ -1,6 +1,8 @@
 angular.module('app')
     .controller('mapController', function ($scope, $window, $state, socket, locationService, uiGmapGoogleMapApi) {
         var vm = this;
+        var myUserIcon = "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-32.png";
+        var otherUserIcon = "https://cdn2.iconfinder.com/data/icons/font-awesome/1792/map-marker-32.png";
 
         // set default values for map
         vm.map = {
@@ -37,10 +39,17 @@ angular.module('app')
                     return user.location && user.location.longitude && user.location.latitude
                 })
                 .map(function (user) {
+                    // generic user
+                    user.labelClass = "other-user-marker";
+                    user.icon = otherUserIcon;
+
+                    // my user specific
                     if (user.id === vm.userId) {
                         user.name = "me";
-                        user.icon = "https://cdn3.iconfinder.com/data/icons/iconic-1/32/map_pin_fill-32.png"
-                    } else {}
+                        user.icon = myUserIcon;
+                        user.labelClass = "my-user-marker";
+                    }
+
                     return {
                         id: user.id,
                         location: {
@@ -48,9 +57,13 @@ angular.module('app')
                             longitude: user.location.longitude,
                         },
                         options: {
-                            label: user.name[0].toUpperCase(),
+                            // label: user.name[0].toUpperCase(),
                             title: user.name,
-                            icon: user.icon
+                            icon: user.icon,
+                            /* content: '<div class="user-marker">' +
+                                '<div class="user-name">' + user.name + '</div>' +
+                                '<img src="' + user.icon + '"/>' +
+                                '</div>' */
                         }
                     }
                 })
