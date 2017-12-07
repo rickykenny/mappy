@@ -18,9 +18,19 @@
     </div>
 
     <div ng-show="vm.usersPending">Loading users...</div>
-    <h3>Users in map: {{vm.markers.length}}</h3>
-    <label ng-hide="true">
-        <input type="checkbox" ng-model="vm.fitAllUsers" value="true" />See everyone</label>
+
+    <div class="action-bar">
+        <button class="action-bar-action" ng-click="vm.renameMe();" style="color: {{vm.myColor}}">
+            {{vm.myName || 'You'}}
+        </button>
+        <button class="action-bar-action" ng-click="vm.showUsers();">
+            {{vm.markers.length -1}} {{vm.markers.length -1 === 1 ? 'other' : 'others'}}
+        </button>
+        <button class="action-bar-action" ng-click="vm.quickShare()">
+            Share...
+        </button>
+    </div>
+
 </div>
 
 

@@ -43,3 +43,16 @@ body {
 .flex.col.h-center {
     align-items: center;
 }
+
+.action-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    flex-basis: 64px;
+}
+
+.action-bar button {
+    font-family: inherit;
+    flex: 1 1 auto;
+}

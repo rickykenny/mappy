@@ -17,6 +17,9 @@ angular.module('app')
                 vm.phrase[phraseId] = dictionaryService.getPhrase(phraseId, vm.swears);
             })
 
+            vm.myColor = '#d60b0b';
+            vm.otherColor = '#000';
+
             $scope.reloadPage = function () {
                 $window.location.reload();
             }
@@ -45,7 +48,7 @@ angular.module('app')
             // setup room and user        
             vm.user = {
                 id: new Date().getTime(),
-                name: "THEM"
+                name: "someone"
             };
             vm.room = {
                 id: $state.params.roomId,
@@ -69,17 +72,20 @@ angular.module('app')
                     })
                     .map(function (user) {
                         // generic user
-                        user.labelClass = "other-user-marker";
                         user.icon = {
                             path: google.maps.SymbolPath.CIRCLE,
                             scale: 8
                         };
+                        user.label = {
+                            color: 'white',
+                            fontWeight: 'bold',
+                            text: user.name,
+                        }
 
                         // my user specific
                         if (user.id === vm.userId) {
-                            user.name = "YOU";
-                            user.icon.strokeColor = '#d60b0b';
-                            user.labelClass = "my-user-marker";
+                            user.name = vm.myName ? mv.myName : 'You';
+                            user.icon.strokeColor = vm.myColor;
                         }
 
                         return {
@@ -101,6 +107,27 @@ angular.module('app')
                     })
                 console.log(vm.markers);
             })
+
+            vm.renameMe = function () {
+                var newName = prompt("Enter your name:");
+                if (!newName) {
+                    return;
+                }
+                vm.myName = newName;
+                vm.user.name = vm.myName;
+                vm.updateUser();
+            }
+
+            vm.showUsers = function () {
+                var allUsers = vm.room.users.map(function (user) {
+                    return user.name;
+                })
+                alert(allUsers.join(', '));
+            }
+
+            vm.quickShare = function(){
+                prompt('Copy and send this link to your friend:', $window.location.href)
+            }
 
             var setLocation = function (location) {
                 vm.user.location = {
