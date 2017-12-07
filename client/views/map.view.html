@@ -1,16 +1,18 @@
 <div ng-show="vm.locationPending" class="fill flex col v-center h-center">
     <div ng-show="!vm.locationDenied">
-        <h3>Awaiting location...</h3>
+        <h3>{{vm.phrase.findingLocation}}</h3>
     </div>
     <div ng-show="vm.locationDenied">
-        <h3>You denied location ya dumb dog!</h3>
+        <h3>{{vm.phrase.locationDenied}}</h3>
+        <h3>{{vm.phrase.locationDeniedLong}}</h3>
+        <button ng-click="reloadPage();">Try again</button>
     </div>
 </div>
 
 
-<div ng-if="!vm.locationPending" class="flex col fill">
+<div ng-show="!vm.locationPending" class="flex col fill">
     <div id="map-wrapper" class="fill">
-        <ui-gmap-google-map id="map" center='vm.map.center' zoom='vm.map.zoom'>
+        <ui-gmap-google-map id="map" center='vm.map.center' zoom='vm.map.zoom' events="vm.map.events">
             <ui-gmap-markers models="vm.markers" idKey='id' options="'options'" fit="true" coords="'location'"></ui-gmap-marker>
         </ui-gmap-google-map>
     </div>
@@ -18,7 +20,7 @@
     <div ng-show="vm.usersPending">Loading users...</div>
     <h3>Users in map: {{vm.markers.length}}</h3>
     <label ng-hide="true">
-        <input type="checkbox" ng-model="fitAllUsers" value="true" />See everyone</label>
+        <input type="checkbox" ng-model="vm.fitAllUsers" value="true" />See everyone</label>
 </div>
 
 
@@ -39,13 +41,5 @@
     #map-wrapper {
         flex: 1;
         position: relative;
-    }
-
-    .my-user-marker {
-        color: red;
-    }
-
-    .other-user-marker {
-        color: blue;
     }
 </style>
