@@ -3,9 +3,6 @@ angular.module('app')
         '$scope', '$window', '$state', '$timeout', 'socket', 'locationService', 'uiGmapGoogleMapApi', 'dictionaryService',
         function ($scope, $window, $state, $timeout, socket, locationService, uiGmapGoogleMapApi, dictionaryService) {
             var vm = this;
-            var myUserIcon = "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-32.png";
-            var otherUserIcon = "https://cdn2.iconfinder.com/data/icons/font-awesome/1792/map-marker-32.png";
-            vm.resized = false;
 
             // enable swears
             vm.swears = true;
@@ -17,32 +14,20 @@ angular.module('app')
                 vm.phrase[phraseId] = dictionaryService.getPhrase(phraseId, vm.swears);
             })
 
+            // set default values for map
+            var myUserIcon = "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-32.png";
+            var otherUserIcon = "https://cdn2.iconfinder.com/data/icons/font-awesome/1792/map-marker-32.png";
+
             vm.myColor = '#d60b0b';
             vm.otherColor = '#000';
 
-            $scope.reloadPage = function () {
-                $window.location.reload();
-            }
-
-            // set default values for map
             vm.map = {
+                control: {},
                 center: {
                     latitude: 45,
                     longitude: -73
                 },
-                zoom: 8,
-                events: {
-                    tilesloaded: function (map) {
-                        if (!vm.resized) {
-                            vm.$apply(function () {
-                                vm.mapInstance = map;
-                                $timeout(function () {
-                                    google.maps.event.trigger(map, "resize");
-                                }, 100)
-                            });
-                        }
-                    }
-                }
+                zoom: 8
             };
 
             // setup room and user        
@@ -58,6 +43,10 @@ angular.module('app')
             vm.updateUser = function () {
                 console.log('updating user...');
                 socket.emit('user-update', vm.user);
+            }
+
+            $scope.reloadPage = function () {
+                $window.location.reload();
             }
 
             socket.on('connected', function (response) {
@@ -84,7 +73,7 @@ angular.module('app')
 
                         // my user specific
                         if (user.id === vm.userId) {
-                            user.name = vm.myName ? mv.myName : 'You';
+                            user.name = vm.myName ? vm.myName : 'You';
                             user.icon.strokeColor = vm.myColor;
                         }
 
@@ -109,6 +98,7 @@ angular.module('app')
             })
 
             vm.renameMe = function () {
+                google.maps.event.trigger(vm.map.control, "resize");
                 var newName = prompt("Enter your name:");
                 if (!newName) {
                     return;
@@ -125,7 +115,7 @@ angular.module('app')
                 alert(allUsers.join(', '));
             }
 
-            vm.quickShare = function(){
+            vm.quickShare = function () {
                 prompt('Copy and send this link to your friend:', $window.location.href)
             }
 
@@ -141,6 +131,9 @@ angular.module('app')
 
             uiGmapGoogleMapApi.then(function (maps) {
                 console.log('google maps ready mate');
+                vm.mapInstance = maps;
+                console.log(maps);
+                google.maps.event.trigger(vm.map, "resize");
 
                 // join room
                 socket.emit('room-join', {

@@ -12,7 +12,7 @@
 
 <div ng-show="!vm.locationPending" class="flex col fill">
     <div id="map-wrapper" class="fill">
-        <ui-gmap-google-map id="map" center='vm.map.center' zoom='vm.map.zoom' events="vm.map.events">
+        <ui-gmap-google-map id="map" center='vm.map.center' zoom='vm.map.zoom' events="vm.map.events" control="vm.map.control">
             <ui-gmap-markers models="vm.markers" idKey='id' options="'options'" fit="true" coords="'location'"></ui-gmap-marker>
         </ui-gmap-google-map>
     </div>
@@ -49,7 +49,7 @@
     }
 
     #map-wrapper {
-        flex: 1;
+        flex-grow: 1;
         position: relative;
     }
 </style>
